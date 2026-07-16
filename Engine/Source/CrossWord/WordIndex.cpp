@@ -99,6 +99,21 @@ bool WordBucket::ContainsWord(const std::shared_ptr<Word>& word) const
 	return this->wordSet.find(word) != this->wordSet.end();
 }
 
+std::shared_ptr<Word> WordBucket::GetRandomWord(Random* random)
+{
+	if (this->wordSet.size() == 0)
+		return nullptr;
+
+	// Unfortunately, this is slow, but hopefully most of the buckets
+	// we call this on will be reasonably sized.
+	int i = random->InRange(0, (int)this->wordSet.size() - 1);
+	auto iter = this->wordSet.begin();
+	while (i-- > 0)
+		iter++;
+
+	return *iter;
+}
+
 //------------------------------- WordGroup -------------------------------
 
 WordGroup::WordGroup()

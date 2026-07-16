@@ -53,6 +53,7 @@ namespace CrossWordEngine
 	public:
 		void Intersect(const WordBucket& wordBucketA, const WordBucket& wordBucketB);
 		bool ContainsWord(const std::shared_ptr<Word>& word) const;
+		std::shared_ptr<Word> GetRandomWord(Random* random);
 
 		std::unordered_set<std::shared_ptr<Word>> wordSet;
 	};
