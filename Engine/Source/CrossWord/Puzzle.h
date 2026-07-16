@@ -2,6 +2,8 @@
 
 namespace CrossWordEngine
 {
+	class WordIndex;
+
 	/**
 	 * 
 	 */
@@ -10,6 +12,8 @@ namespace CrossWordEngine
 	public:
 		Puzzle();
 		virtual ~Puzzle();
+
+		bool Generate(int numRows, int numCols, WordIndex* wordIndex);
 
 		// STPTODO: Own matrix?
 	};

@@ -2,8 +2,9 @@
 
 using namespace CrossWordEngine;
 
-Word::Word()
+Word::Word(const std::string& word)
 {
+	this->word = word;
 }
 
 /*virtual*/ Word::~Word()

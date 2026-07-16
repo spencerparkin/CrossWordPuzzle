@@ -10,12 +10,11 @@ namespace CrossWordEngine
 	class Word
 	{
 	public:
-		Word();
+		Word(const std::string& word);
 		virtual ~Word();
 
 	public:
 		std::string word;
-		std::string definition;
 		std::string puzzleHint;
 	};
 }
