@@ -1,5 +1,6 @@
 #include "Frame.h"
 #include "App.h"
+#include "CrossWord/Random.h"
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/busycursor.h>
@@ -68,10 +69,13 @@ void Frame::OnGeneratePuzzle(wxCommandEvent& event)
 
 	CrossWordEngine::Puzzle* puzzle = &wxGetApp().puzzle;
 
+	CrossWordEngine::Random random;
+	random.SetSeed(12345);
+
 	// STPTODO: Maybe make dialog querying user for dimensions of puzzle?
 	int numRows = 10;
 	int numCols = 10;
-	if (!puzzle->Generate(numRows, numCols, wordIndex))
+	if (!puzzle->Generate(numRows, numCols, wordIndex, &random))
 	{
 		wxMessageBox("Failed to generate puzzle!", "Error!", wxICON_ERROR | wxOK, this);
 		return;
