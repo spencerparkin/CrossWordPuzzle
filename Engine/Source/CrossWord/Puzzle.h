@@ -3,6 +3,7 @@
 namespace CrossWordEngine
 {
 	class WordIndex;
+	class Random;
 
 	/**
 	 * 
@@ -13,7 +14,7 @@ namespace CrossWordEngine
 		Puzzle();
 		virtual ~Puzzle();
 
-		bool Generate(int numRows, int numCols, WordIndex* wordIndex);
+		bool Generate(int numRows, int numCols, WordIndex* wordIndex, Random* random);
 
 		// STPTODO: Own matrix?
 	};

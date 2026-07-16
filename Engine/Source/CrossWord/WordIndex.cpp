@@ -1,7 +1,9 @@
 #include "CrossWord/WordIndex.h"
 #include "CrossWord/WordSource.h"
 #include "CrossWord/Word.h"
+#include "CrossWord/Random.h"
 #include <algorithm>
+#include <random>
 
 using namespace CrossWordEngine;
 
@@ -97,6 +99,33 @@ bool WordBucket::ContainsWord(const std::shared_ptr<Word>& word) const
 	return this->wordSet.find(word) != this->wordSet.end();
 }
 
+//------------------------------- WordGroup -------------------------------
+
+WordGroup::WordGroup()
+{
+	this->isShuffled = false;
+	this->nextWordOffset = 0;
+}
+
+std::shared_ptr<Word> WordGroup::GetNextRandomWord(Random* random)
+{
+	if (this->wordArray.size() == 0)
+		return nullptr;
+
+	if (!this->isShuffled)
+	{
+		random->Shuffle(this->wordArray.data(), (uint32_t)this->wordArray.size());
+		this->isShuffled = true;
+	}
+
+	std::shared_ptr<Word> word = this->wordArray[this->nextWordOffset++];
+	
+	if (this->nextWordOffset >= (unsigned int)this->wordArray.size())
+		this->nextWordOffset = 0;
+
+	return word;
+}
+
 //------------------------------- WordIndex -------------------------------
 
 WordIndex::WordIndex()
@@ -110,7 +139,7 @@ WordIndex::WordIndex()
 void WordIndex::Clear()
 {
 	this->wordBucketMap.clear();
-	this->wordSet.clear();
+	this->wordMap.clear();
 }
 
 unsigned int WordIndex::GetNumBuckets()
@@ -129,13 +158,13 @@ bool WordIndex::Generate(WordSource* wordSource, std::function<bool(int, int)> p
 
 		std::shared_ptr<Word> word = wordSource->GetWord(i);
 
-		if (this->wordSet.find(word->word) != this->wordSet.end())
+		if (this->wordMap.find(word->word) != this->wordMap.end())
 			continue;
 
 		if (!this->IntegrateWord(word))
 			return false;
 
-		this->wordSet.insert(word->word);
+		this->wordMap.insert(std::pair(word->word, word));
 	}
 
 	if (progressLambda(numWords, numWords))
@@ -166,6 +195,19 @@ bool WordIndex::IntegrateWord(std::shared_ptr<Word> word)
 
 		wordBucket->wordSet.insert(word);
 	}
+
+	std::shared_ptr<WordGroup> wordGroup;
+
+	auto pair = this->wordGroupMap.find((unsigned int)word->word.length());
+	if (pair != this->wordGroupMap.end())
+		wordGroup = pair->second;
+	else
+	{
+		wordGroup = std::make_shared<WordGroup>();
+		this->wordGroupMap.insert(std::pair((unsigned int)word->word.length(), wordGroup));
+	}
+
+	wordGroup->wordArray.push_back(word);
 
 	return true;
 }
@@ -211,5 +253,15 @@ bool WordIndex::FindOrCreateBucket(const WordBucketKey& key, std::shared_ptr<con
 
 	this->wordBucketMap.insert(std::pair(key, newWordBucket));
 	wordBucket = newWordBucket;
+	return true;
+}
+
+bool WordIndex::GetRandomWordOfLength(unsigned int wordLength, std::shared_ptr<Word>& word, Random* random)
+{
+	auto pair = this->wordGroupMap.find(wordLength);
+	if (pair == this->wordGroupMap.end() || !pair->second.get())
+		return false;
+
+	word = pair->second->GetNextRandomWord(random);
 	return true;
 }

@@ -11,6 +11,7 @@ namespace CrossWordEngine
 {
 	class Word;
 	class WordSource;
+	class Random;
 
 	struct LetterPosition
 	{
@@ -44,6 +45,9 @@ struct std::hash<CrossWordEngine::WordBucketKey>
 
 namespace CrossWordEngine
 {
+	/**
+	 * These are words that share the same word bucket key.
+	 */
 	class WordBucket
 	{
 	public:
@@ -51,6 +55,21 @@ namespace CrossWordEngine
 		bool ContainsWord(const std::shared_ptr<Word>& word) const;
 
 		std::unordered_set<std::shared_ptr<Word>> wordSet;
+	};
+
+	/**
+	 * These are words that share the same length.
+	 */
+	class WordGroup
+	{
+	public:
+		WordGroup();
+
+		std::shared_ptr<Word> GetNextRandomWord(Random* random);
+
+		bool isShuffled;
+		int nextWordOffset;
+		std::vector<std::shared_ptr<Word>> wordArray;
 	};
 
 	/**
@@ -91,11 +110,21 @@ namespace CrossWordEngine
 		 */
 		bool FindOrCreateBucket(const WordBucketKey& key, std::shared_ptr<const WordBucket>& wordBucket);
 
+		/**
+		 * Find and return a word of the given length at random.
+		 * 
+		 * @param[in] wordLength This is the length of the desired word.
+		 * @param[out] word The randomly found word is returned here.
+		 * @return True is returned if a word was found.
+		 */
+		bool GetRandomWordOfLength(unsigned int wordLength, std::shared_ptr<Word>& word, Random* random);
+
 	private:
 
 		bool IntegrateWord(std::shared_ptr<Word> word);
 
 		std::unordered_map<WordBucketKey, std::shared_ptr<WordBucket>> wordBucketMap;
-		std::unordered_set<std::string> wordSet;
+		std::unordered_map<std::string, std::shared_ptr<Word>> wordMap;
+		std::unordered_map<unsigned int, std::shared_ptr<WordGroup>> wordGroupMap;
 	};
 }

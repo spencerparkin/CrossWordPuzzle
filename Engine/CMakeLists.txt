@@ -9,6 +9,8 @@ set(CROSSWORD_ENGINE_SOURCES
 	Source/CrossWord/WordSource.h
 	Source/CrossWord/Word.cpp
 	Source/CrossWord/Word.h
+	Source/CrossWord/Random.cpp
+	Source/CrossWord/Random.h
 )
 
 add_library(CrossWordEngine STATIC ${CROSSWORD_ENGINE_SOURCES})
