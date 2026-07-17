@@ -75,7 +75,10 @@ void Frame::OnGeneratePuzzle(wxCommandEvent& event)
 	// STPTODO: Maybe make dialog querying user for dimensions of puzzle?
 	int numRows = 10;
 	int numCols = 10;
-	if (!puzzle->Generate(numRows, numCols, wordIndex, &random))
+
+	puzzle->SetSize(numRows, numCols);
+
+	if (!puzzle->Generate(wordIndex, &random))
 	{
 		wxMessageBox("Failed to generate puzzle!", "Error!", wxICON_ERROR | wxOK, this);
 		return;

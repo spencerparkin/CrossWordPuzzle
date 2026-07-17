@@ -120,6 +120,11 @@ namespace CrossWordEngine
 		 */
 		bool GetRandomWordOfLength(unsigned int wordLength, std::shared_ptr<Word>& word, Random* random);
 
+		/**
+		 * Tell us if the given word is an actual word in our language.
+		 */
+		bool IsValidWord(const std::string& word) const;
+
 	private:
 
 		bool IntegrateWord(std::shared_ptr<Word> word);

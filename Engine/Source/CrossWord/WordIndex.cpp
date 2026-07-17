@@ -280,3 +280,8 @@ bool WordIndex::GetRandomWordOfLength(unsigned int wordLength, std::shared_ptr<W
 	word = pair->second->GetNextRandomWord(random);
 	return true;
 }
+
+bool WordIndex::IsValidWord(const std::string& word) const
+{
+	return this->wordMap.find(word) != this->wordMap.end();
+}
